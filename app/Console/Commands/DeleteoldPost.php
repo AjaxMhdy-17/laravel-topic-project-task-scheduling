@@ -26,7 +26,7 @@ class DeleteoldPost extends Command
      */
     public function handle()
     {
-        $post = Blog::first();
-        $post->delete() ; 
+        $post = Blog::orderBy('id','desc')->first();
+        $post->delete() ;
     }
 }
