@@ -4,29 +4,26 @@ namespace App\Console\Commands;
 
 use App\Models\Blog;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Cache;
 
 class DeleteoldPost extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'app:deleteold-post';
+    protected $description = 'Deletes latest blog post. Stops when table is empty.';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
-
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
-        $post = Blog::orderBy('id','desc')->first();
-        $post->delete() ;
+        $post = Blog::latest('id')->first();
+
+        if (!$post) {
+            $this->info('No more posts to delete. Disabling future runs...');
+            Cache::forever('schedule:disable:deleteold-post', true); 
+            return Command::SUCCESS;
+        }
+
+        $post->delete();
+        $this->info("Deleted post ID: {$post->id}");
+
+        return Command::SUCCESS;
     }
 }

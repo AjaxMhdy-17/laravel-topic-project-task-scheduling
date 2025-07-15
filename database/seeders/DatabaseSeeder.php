@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
 
     function Post()
     {
-        for ($i = 0; $i < 15; $i++) {
+        for ($i = 1; $i <= 3; $i++) {
             Blog::create([
                 "name" => "title " . $i,
                 "description" => "description : " . $i
