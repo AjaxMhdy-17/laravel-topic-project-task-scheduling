@@ -13,11 +13,17 @@ class DeleteoldPost extends Command
 
     public function handle()
     {
+
+        // if (Cache::get('schedule:disable:deleteold-post')) {
+        //     $this->info('Resetting disable flag...');
+        //     Cache::forget('schedule:disable:deleteold-post');
+        // }
+
         $post = Blog::latest('id')->first();
 
         if (!$post) {
-            $this->info('No more posts to delete. Disabling future runs...');
-            Cache::forever('schedule:disable:deleteold-post', true); 
+            $this->warn('No more posts to delete. Disabling future runs...');
+            Cache::forever('schedule:disable:deleteold-post', true);
             return Command::SUCCESS;
         }
 
